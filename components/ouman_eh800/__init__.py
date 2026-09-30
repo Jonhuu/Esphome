@@ -256,7 +256,7 @@ async def to_code(config):
     cg.add(var.set_username(config[CONF_USERNAME]))
     cg.add(var.set_password(config[CONF_PASSWORD]))
     cg.add(var.set_max_response_size(config[CONF_MAX_RESPONSE_SIZE]))
-    cg.add(var.set_slow_update_interval(config[CONF_SLOW_UPDATE_INTERVAL]))
+    cg.add(var.set_slow_update_interval(config[CONF_SLOW_UPDATE_INTERVAL].total_milliseconds))
 
     for key, setter in SENSOR_MAP:
         if conf := config.get(key):
