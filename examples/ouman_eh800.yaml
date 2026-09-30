@@ -1,0 +1,43 @@
+# Example configuration for the Ouman EH-800 external component.
+#
+# The ESP32 polls EH-800 itself. Home Assistant only receives the latest
+# values through the normal ESPHome native API.
+#
+# Put credentials in secrets.yaml:
+#   ouman_username: "..."
+#   ouman_password: "..."
+
+external_components:
+  - source:
+      type: git
+      url: https://github.com/Jonhuu/Esphome
+      ref: feature/ouman-eh800-reader
+    components: [ouman_eh800]
+    refresh: always
+
+http_request:
+  verify_ssl: false
+  timeout: 5s
+  watchdog_timeout: 5s
+
+ouman_eh800:
+  host: 192.168.1.100
+  port: 80
+  username: !secret ouman_username
+  password: !secret ouman_password
+  update_interval: 15s
+
+  outdoor_temperature:
+    name: "Ouman ulkolämpötila"
+
+  l1_supply_temperature:
+    name: "Ouman L1 menovesi"
+
+  l1_supply_target:
+    name: "Ouman L1 menoveden tavoite"
+
+  l1_room_temperature:
+    name: "Ouman L1 huonelämpötila"
+
+  l1_valve_position:
+    name: "Ouman L1 venttiili"
