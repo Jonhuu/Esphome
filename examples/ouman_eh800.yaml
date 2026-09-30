@@ -1,9 +1,9 @@
-# Example configuration for the Ouman EH-800 external component.
+# Ouman EH-800 external component example.
 #
-# The ESP32 polls EH-800 itself. Home Assistant only receives the latest
-# values through the normal ESPHome native API.
+# ESP32 polls EH-800 directly. Home Assistant receives the latest values through
+# the ESPHome native API.
 #
-# Put credentials in secrets.yaml:
+# secrets.yaml:
 #   ouman_username: "..."
 #   ouman_password: "..."
 
@@ -25,7 +25,12 @@ ouman_eh800:
   port: 80
   username: !secret ouman_username
   password: !secret ouman_password
-  update_interval: 15s
+
+  # FAST group
+  update_interval: 10s
+
+  # Writable settings and mode states
+  slow_update_interval: 60s
 
   outdoor_temperature:
     name: "Ouman ulkolämpötila"
@@ -33,11 +38,67 @@ ouman_eh800:
   l1_supply_temperature:
     name: "Ouman L1 menovesi"
 
-  l1_supply_target:
-    name: "Ouman L1 menoveden tavoite"
-
   l1_room_temperature:
     name: "Ouman L1 huonelämpötila"
 
+  l1_room_remote:
+    name: "Ouman L1 huonekaukoasetus"
+
   l1_valve_position:
-    name: "Ouman L1 venttiili"
+    name: "Ouman L1 venttiilin asento"
+
+  l1_curve_supply_target:
+    name: "Ouman L1 menovesi säätökäyrän mukaan"
+
+  l1_room_compensation:
+    name: "Ouman L1 huonekompensoinnin vaikutus"
+
+  l1_room_compensation_time_correction:
+    name: "Ouman L1 huonekompensoinnin aikakorjaus"
+
+  l1_supply_target:
+    name: "Ouman L1 laskennallinen menoveden asetusarvo"
+
+  l1_smoothed_room_temperature:
+    name: "Ouman L1 hidastettu huonelämpötila"
+
+  l1_calculated_room_target:
+    name: "Ouman L1 laskennallinen huoneasetusarvo"
+
+  # These option/value mappings were recovered directly from eh800.js.
+  l1_control_mode:
+    name: "Ouman L1 ohjaustapa"
+
+  home_away_mode:
+    name: "Ouman kotona / poissa"
+
+  # ---------------------------------------------------------------
+  # WRITABLE NUMBERS
+  # ---------------------------------------------------------------
+  # The EH-800 web data confirms that the following registers are writable,
+  # but settingsl1? does NOT report their valid min/max ranges.
+  #
+  # Therefore the component intentionally requires min_value and max_value
+  # before a writable number can be enabled. Do not guess the limits.
+  #
+  # Example syntax once the valid limits have been verified:
+  #
+  # l1_room_setpoint:
+  #   name: "Ouman L1 huonelämpötilan asetus"
+  #   min_value: <verified minimum>
+  #   max_value: <verified maximum>
+  #   step: 0.1
+  #
+  # Available writable number keys / registers:
+  #
+  # l1_room_setpoint         -> S_81_85
+  # l1_temperature_drop      -> S_87_85
+  # l1_large_temperature_drop -> S_88_85
+  # l1_supply_min            -> S_54_85
+  # l1_supply_max            -> S_55_85
+  # l1_curve_minus_20        -> S_67_85
+  # l1_curve_minus_10        -> S_69_85
+  # l1_curve_0               -> S_71_85
+  # l1_curve_plus_10         -> S_73_85
+  # l1_curve_plus_20         -> S_75_85
+  # l1_manual_valve          -> S_92_85
